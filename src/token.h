@@ -29,20 +29,22 @@ enum TokenType {
     PRINT, RETURN, SUPER, THIS, TRUE, VAR, WHILE,
 
     EndOfFile
-  };
+};
 
 class Token {
-  private:
+private:
     const TokenType type;
     const std::string lexeme;
     const std::optional<std::any> literal;
     const int line;
+
 public:
-    Token(const TokenType type, std::string lexeme, std::optional<std::any> literal, const int line) : type(type), lexeme(std::move(lexeme)), literal(std::move(literal)), line(line){};
+    Token(const TokenType type, std::string lexeme, std::optional<std::any> literal, const int line) : type(type),
+        lexeme(std::move(lexeme)), literal(std::move(literal)), line(line) {
+    };
 
     [[nodiscard]] std::string toString() const;
 };
-
 
 
 #endif //TOKEN_H

@@ -14,11 +14,11 @@
 Scanner::Scanner(std::string input_source) : source(std::move(input_source)) {
 }
 
-bool Scanner::isAtEnd() const {
+auto Scanner::isAtEnd() const -> bool {
     return (current >= static_cast<int>(source.length()));
 }
 
-std::vector<Token> Scanner::scanTokens() {
+auto Scanner::scanTokens() -> std::vector<Token> {
     while (!isAtEnd()) {
         start = current;
         scanToken();
