@@ -14,6 +14,27 @@
 Scanner::Scanner(std::string input_source) : source(std::move(input_source)) {
 }
 
+
+std::unordered_map<std::string, TokenType> Scanner::keywords = {
+    {"and", TokenType::AND},
+    {"class", TokenType::CLASS},
+    {"else", TokenType::ELSE},
+    {"false", TokenType::FALSE},
+    {"for", TokenType::FOR},
+    {"fun", TokenType::FUN},
+    {"if", TokenType::IF},
+    {"nil", TokenType::NIL},
+    {"or", TokenType::OR},
+    {"print", TokenType::PRINT},
+    {"return", TokenType::RETURN},
+    {"super", TokenType::SUPER},
+    {"this", TokenType::THIS},
+    {"true", TokenType::TRUE},
+    {"var", TokenType::VAR},
+    {"while", TokenType::WHILE}
+};
+
+
 auto Scanner::isAtEnd() const -> bool {
     return (current >= static_cast<int>(source.length()));
 }
@@ -95,11 +116,32 @@ void Scanner::scanToken() {
         default:
             if (isDigit(c)) {
                 number();
+            } else if (isAlpha(c)) {
+                identifier();
             } else {
                 Lox::error(line, "Unexpected character.");
             }
             break;
     }
+}
+
+
+void Scanner::identifier() {
+    while (isAlphaNumeric(peek())) advance();
+    const std::string text = source.substr(start, current - start);
+    TokenType type;
+    if (const auto it = keywords.find(text); it != keywords.end()) {
+        type = it->second;
+    } else {
+        type = TokenType::IDENTIFIER;
+    }
+    addToken(type);
+}
+
+bool Scanner::isAlpha(char c) {
+    return (c >= 'a' && c <= 'z') ||
+           (c >= 'A' && c <= 'Z') ||
+           c == '_';
 }
 
 void Scanner::number() {
@@ -113,13 +155,17 @@ void Scanner::number() {
     }
 
     try {
-        double value = std::stod(source.substr(start, current - start));
+        double value = std::stod(source.substr(start, current - start + 1));
         addToken(TokenType::NUMBER, value);
     } catch (const std::invalid_argument &) {
         Lox::error(line, "Invalid number format.");
     } catch (const std::out_of_range &) {
         Lox::error(line, "Number too large.");
     }
+}
+
+bool Scanner::isAlphaNumeric(char c) {
+    return isAlpha(c) || isDigit(c);
 }
 
 

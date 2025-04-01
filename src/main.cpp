@@ -11,14 +11,9 @@ auto runPrompt() -> void {
     std::cout << "Cpp-Lox v0.0.1\n";
     while (!lox.getExit()) {
         std::cout << ">>> ";
-        std::cin >> input_line;
+        std::getline(std::cin, input_line);
         if (input_line.empty()) {
             exit(0);
-        }
-
-        //TODO: remove this later
-        if (input_line == "exit") {
-            lox.setExit(true);
         }
         Lox::hadError = false;
         lox.run(input_line);
